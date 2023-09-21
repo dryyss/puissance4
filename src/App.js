@@ -1,23 +1,14 @@
-import logo from './logo.svg';
-import './App.css';
+import Board from "./Component/Board/Board";
+import Score from "./Component/Score/Score";
+import { useGrid } from "./Context/useGrid";
 
 function App() {
+  const { winner, reset } = useGrid();
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1> Puissance 4 </h1> <Score /> <Board />{" "}
+      {winner !== null && <button onClick={() => reset()}> Reset </button>}{" "}
     </div>
   );
 }

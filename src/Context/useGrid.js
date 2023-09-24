@@ -1,19 +1,10 @@
 import { createContext, useContext, useState } from "react";
+import { createGrid } from "../Utils/helper";
 
-const numRows = 6;
-const numCols = 7;
-const initialValue = null;
-
-const createGrid = () => {
-  return Array.from({ length: numRows }, () =>
-    Array.from({ length: numCols }).fill(initialValue)
-  );
-};
-
-const GridContext = createContext(createGrid());
+const GridContext = createContext(createGrid(6, 7));
 
 export const GridProvider = ({ children }) => {
-  const [grid, setGrid] = useState(createGrid());
+  const [grid, setGrid] = useState(createGrid(6, 7));
   const [player, setPlayer] = useState(0);
   const [winner, setWinner] = useState(null);
   const [scoreP0, setScoreP0] = useState(0);
@@ -21,7 +12,7 @@ export const GridProvider = ({ children }) => {
   const [draw, setDraw] = useState(false);
 
   const reset = () => {
-    setGrid(createGrid());
+    setGrid(createGrid(6, 7));
     setPlayer(0);
     setWinner(null);
     setDraw(false);
@@ -45,7 +36,6 @@ export const GridProvider = ({ children }) => {
         setDraw,
       }}
     >
-      {" "}
       {children}{" "}
     </GridContext.Provider>
   );

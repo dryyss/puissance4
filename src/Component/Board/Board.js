@@ -1,14 +1,28 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import Cell, { Token } from "../Cell/Cell";
 import { useGrid } from "../../Context/useGrid";
+import { player1Configs, player2Configs } from "../../constant";
 
 const Table = styled.table`
   border-collapse: collapse;
 `;
 
+const initialState = "player' s turn";
+
 const Board = () => {
-  const { grid, winner, player } = useGrid();
+  const { grid, winner, draw, player } = useGrid();
+  const [message, setMessage] = useState(initialState);
+
+  useEffect(() => {
+    if (winner !== null) {
+      setMessage("The winner is player");
+    } else if (draw === true) {
+      setMessage("Tie!!!");
+    } else {
+      setMessage(initialState);
+    }
+  }, [winner, draw]);
 
   const memoizedGrid = useMemo(() => {
     return grid.map((row, rowIndex) => (
@@ -29,11 +43,13 @@ const Board = () => {
           gap: "5px",
         }}
       >
-        {" "}
-        {winner !== null
-          ? "The winner is player"
-          : "It 's the player' s turn"}{" "}
-        <Token color={player === 0 ? "red" : "yellow"} size="20px" />
+        {message}{" "}
+        {!draw && (
+          <Token
+            color={player === 0 ? player1Configs.color : player2Configs.color}
+            size="20px"
+          />
+        )}{" "}
       </div>{" "}
       <Table>
         <tbody> {memoizedGrid} </tbody>{" "}

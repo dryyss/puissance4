@@ -1,6 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 import { useGrid } from "../../Context/useGrid";
+import {
+  checkEquality,
+  checkWin,
+  isFullColumn,
+  updateGrid,
+} from "../../Utils/helper";
+import { player1Configs, player2Configs } from "../../constant";
 
 const CellDiv = styled.td`
   width: 100px;
@@ -17,84 +24,6 @@ export const Token = styled.div`
   background-color: ${(props) => props.color};
 `;
 
-function checkWin(grid, player) {
-  // Vérification horizontale
-  for (let row = 0; row < grid.length; row++) {
-    for (let col = 0; col <= grid[row].length - 4; col++) {
-      if (
-        grid[row][col] === player &&
-        grid[row][col + 1] === player &&
-        grid[row][col + 2] === player &&
-        grid[row][col + 3] === player
-      ) {
-        return true; // Combinaison horizontale gagnante
-      }
-    }
-  }
-
-  // Vérification verticale
-  for (let row = 0; row <= grid.length - 4; row++) {
-    for (let col = 0; col < grid[row].length; col++) {
-      if (
-        grid[row][col] === player &&
-        grid[row + 1][col] === player &&
-        grid[row + 2][col] === player &&
-        grid[row + 3][col] === player
-      ) {
-        return true; // Combinaison verticale gagnante
-      }
-    }
-  }
-
-  // Vérification diagonale (vers le bas à droite)
-  for (let row = 0; row <= grid.length - 4; row++) {
-    for (let col = 0; col <= grid[row].length - 4; col++) {
-      if (
-        grid[row][col] === player &&
-        grid[row + 1][col + 1] === player &&
-        grid[row + 2][col + 2] === player &&
-        grid[row + 3][col + 3] === player
-      ) {
-        return true; // Combinaison diagonale (vers le bas à droite) gagnante
-      }
-    }
-  }
-
-  // Vérification diagonale (vers le bas à gauche)
-  for (let row = 0; row <= grid.length - 4; row++) {
-    for (let col = 3; col < grid[row].length; col++) {
-      if (
-        grid[row][col] === player &&
-        grid[row + 1][col - 1] === player &&
-        grid[row + 2][col - 2] === player &&
-        grid[row + 3][col - 3] === player
-      ) {
-        return true; // Combinaison diagonale (vers le bas à gauche) gagnante
-      }
-    }
-  }
-
-  return false; // Aucune combinaison gagnante trouvée
-}
-
-const updateGrid = (grid, col, player) => {
-  for (let row = grid.length - 1; row >= 0; row--) {
-    if (grid[row][col] === null) {
-      grid[row][col] = player;
-      break;
-    }
-  }
-};
-
-const isFullColumn = (grid, col) => {
-  for (let row = 0; row <= grid.length - 1; row++) {
-    if (grid[row][col] === null) {
-      return false;
-    }
-  }
-  return true;
-};
-
 const Cell = ({ row, col }) => {
   const {
     setGrid,
@@ -106,6 +35,7 @@ const Cell = ({ row, col }) => {
     scoreP1,
     setScoreP0,
     setScoreP1,
+    setDraw,
   } = useGrid();
 
   const handleClick = () => {
@@ -121,6 +51,10 @@ const Cell = ({ row, col }) => {
       updateGrid(copyGrid, col, player);
       setGrid(copyGrid);
 
+      if (checkEquality(grid)) {
+        setDraw(true);
+        return;
+      }
       if (checkWin(copyGrid, player)) {
         if (player === 0) {
           setScoreP0(scoreP0 + 1);
@@ -138,7 +72,6 @@ const Cell = ({ row, col }) => {
 
   return (
     <CellDiv onClick={handleClick}>
-      {" "}
       <div
         style={{
           display: "flex",
@@ -146,9 +79,12 @@ const Cell = ({ row, col }) => {
           justifyContent: "center",
         }}
       >
-        {" "}
-        {grid[row][col] === 0 && <Token color="red" size="80px" />}{" "}
-        {grid[row][col] === 1 && <Token color="yellow" size="80px" />}{" "}
+        {grid[row][col] === 0 && (
+          <Token color={player1Configs.color} size="80px" />
+        )}{" "}
+        {grid[row][col] === 1 && (
+          <Token color={player2Configs.color} size="80px" />
+        )}{" "}
       </div>{" "}
     </CellDiv>
   );

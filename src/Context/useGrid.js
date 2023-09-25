@@ -11,6 +11,9 @@ export const GridProvider = ({ children }) => {
   const [scoreP1, setScoreP1] = useState(0);
   const [draw, setDraw] = useState(false);
 
+  // const changePlayer  = (player) => {
+  //   if (play)
+  // }
   const reset = () => {
     setGrid(createGrid(6, 7));
     setPlayer(0);
